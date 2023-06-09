@@ -2,6 +2,7 @@ package com.example.aigame.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.aigame.data.entities.requests.AnswerRequest
 import com.example.aigame.domain.use_cases.GetQuestionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ class QuestionViewModel @Inject constructor(
 
     fun fetchQuestion() {
         viewModelScope.launch {
-            val questionResponse = getQuestionUseCase()
+            val answerRequest = AnswerRequest("first commit")
+            val questionResponse = getQuestionUseCase(userId = "userId", sessionId = "sessionId", answerRequest = answerRequest)
             _question.value = questionResponse?.question ?: ""
             _options.value = questionResponse?.options ?: emptyList()
         }

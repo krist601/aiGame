@@ -1,4 +1,4 @@
-package com.example.aigame.data.entities
+package com.example.aigame.data.entities.responses
 
 class QuestionResponse(
     val question: String,

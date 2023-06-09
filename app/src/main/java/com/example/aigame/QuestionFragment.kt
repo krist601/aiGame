@@ -1,5 +1,6 @@
 package com.example.aigame
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,8 +68,8 @@ class QuestionFragment : Fragment() {
         // Load the banner ad
         val adView = remember {
             AdView(context).apply {
-                adSize = AdSize.BANNER
-                adUnitId = "ca-app-pub-8059056970711952/1746641337"
+                adSize = AdSize.FLUID
+                adUnitId = "ca-app-pub-3940256099942544/6300978111"//"ca-app-pub-8059056970711952/1746641337"
                 loadAd(AdRequest.Builder().build())
             }
         }
@@ -87,6 +88,10 @@ class QuestionFragment : Fragment() {
                 options.forEach { option ->
                     Button(onClick = { /* Handle option selection */ }) {
                         Text(text = option)
+                        /*call (answer = "boton.text")
+                        viewModel.question.collect {
+                            // Update UI with new question
+                        }*/
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -102,7 +107,6 @@ class QuestionFragment : Fragment() {
                 AndroidView(factory = { adView })
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
