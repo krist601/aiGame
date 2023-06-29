@@ -1,6 +1,6 @@
 package com.example.aigame.data.entities.responses
 
 class QuestionResponse(
-    val question: String,
-    val options: List<String>
+    val question: String = "",
+    val options: List<String>? = null
 )

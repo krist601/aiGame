@@ -1,27 +1,23 @@
 package com.example.aigame
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -76,22 +72,22 @@ class QuestionFragment : Fragment() {
         Column {
             Column(
                 modifier = Modifier
-                    .background(Color.Blue)
                     .padding(16.dp)
                     .fillMaxWidth()
+                    .weight(1f)
             ) {
                 val question by viewModel.question.collectAsState()
-                val options by viewModel.options.collectAsState()
 
-                Text(text = question, style = MaterialTheme.typography.titleLarge)
+                Text(text = question.question, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(16.dp))
-                options.forEach { option ->
-                    Button(onClick = { /* Handle option selection */ }) {
+                question.options?.forEach { option ->
+                    Button(
+                        modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+                        onClick = {
+                        viewModel.getQuestion(option)
+                    }) {
                         Text(text = option)
-                        /*call (answer = "boton.text")
-                        viewModel.question.collect {
-                            // Update UI with new question
-                        }*/
+
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -112,7 +108,13 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Collect the flows
+
         lifecycleScope.launchWhenStarted {
+            viewModel.gameData.collect {
+                viewModel.startLevel()
+            }
+        }
+        /*lifecycleScope.launchWhenStarted {
             viewModel.question.collect {
                 // Update UI with new question
             }
@@ -121,8 +123,8 @@ class QuestionFragment : Fragment() {
             viewModel.options.collect {
                 // Update UI with new options
             }
-        }
-        viewModel.fetchQuestion()
+        }*/
+        viewModel.getGameStorage()
     }
     @Preview
     @Composable
