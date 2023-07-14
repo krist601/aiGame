@@ -4,32 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,15 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -92,8 +79,7 @@ class QuestionFragment : Fragment() {
     @Composable
     fun View(){
 
-        var randomColor by remember { mutableStateOf(generateRandomColor()) }
-
+        val randomColor by remember { mutableStateOf(generateRandomColor()) }
 
         Box(
             Modifier.fillMaxSize().background(color = randomColor.first)
@@ -103,12 +89,12 @@ class QuestionFragment : Fragment() {
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize())
-            innerView(randomColor)
+            InnerView(randomColor)
         }
 
     }
     @Composable
-    fun innerView(randomColor: Pair<Color,Color>){
+    fun InnerView(randomColor: Pair<Color,Color>){
         val context = LocalContext.current
         MobileAds.initialize(context)
 
@@ -120,7 +106,7 @@ class QuestionFragment : Fragment() {
             }
         }
 
-        val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/The_Legend_of_Zelda-_Tri_Force_Heroes_Logo.png/1600px-The_Legend_of_Zelda-_Tri_Force_Heroes_Logo.png"
+        val imageUrl = "https://static.wikia.nocookie.net/clash-of-clans/images/c/c5/Dragón_info.png/revision/latest/scale-to-width-down/120?cb=20210819010118&path-prefix=es"
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -132,42 +118,42 @@ class QuestionFragment : Fragment() {
                     .weight(1f)
             ) {
                 val question by viewModel.question.collectAsState()
-                    Box(
-                        modifier = Modifier.background(Color.Transparent).height(350.dp),
-                    ) {
-                        val painter = rememberImagePainter(data = imageUrl)
+                Box(
+                    modifier = Modifier.background(Color.Transparent).height(350.dp),
+                ) {
+                    val painter = rememberImagePainter(data = imageUrl)
 
-                        Box(modifier = Modifier.background(Color.Transparent).padding(end = 32.dp, start = 32.dp, top = 48.dp, bottom = 32.dp)) {
-                            Image(
-                                painterResource(R.drawable.image_background),
-                                modifier = Modifier.fillMaxSize()
-                                    .background(Color.Transparent)
-                                    .clip(RoundedCornerShape(8)),
-                                contentDescription = "",
-                                contentScale = ContentScale.FillBounds
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Image(
-                                painter = painter,
-                                contentDescription = null,
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier.fillMaxWidth()
-                                    .height(250.dp)
-                                    .align(Alignment.BottomCenter)
-                            )
-                        }
-                        Text(
-                            text = "Your Text",
-                            color = Color.White,
-                            fontSize = 40.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(16.dp)
+                    Box(modifier = Modifier.background(Color.Transparent).padding(end = 32.dp, start = 32.dp, top = 48.dp, bottom = 32.dp)) {
+                        Image(
+                            painterResource(R.drawable.image_background),
+                            modifier = Modifier.fillMaxSize()
+                                .background(Color.Transparent)
+                                .clip(RoundedCornerShape(8)),
+                            contentDescription = "",
+                            contentScale = ContentScale.FillBounds
                         )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxWidth()
+                                .height(250.dp)
+                                .align(Alignment.BottomCenter)
+                        )
+                    }
+                    Text(
+                        text = "Your Text",
+                        color = Color.White,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(16.dp)
+                    )
                 }
 
                 //LoadCard()
@@ -265,7 +251,7 @@ class QuestionFragment : Fragment() {
         )
         Card(
             Modifier
-                .padding(top = 16.dp)
+                .padding(top = 16.dp, end = 32.dp, start = 32.dp, bottom = 16.dp)
                 .fillMaxSize()
                 .graphicsLayer {
                     rotationY = rotation
@@ -296,6 +282,7 @@ class QuestionFragment : Fragment() {
                             .padding(top = 0.dp, bottom = 16.dp, end = 32.dp, start = 32.dp)
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp),
+                        shape = MaterialTheme.shapes.small,
                         colors = ButtonDefaults.buttonColors(randomColor.second),
                         onClick = {
                             visible = true
@@ -326,7 +313,9 @@ class QuestionFragment : Fragment() {
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 0.dp, end = 32.dp, start = 32.dp),
+                                .padding(top = 8.dp, bottom = 0.dp, end = 32.dp, start = 32.dp)
+                                .clip(RoundedCornerShape(2)),
+                            shape = MaterialTheme.shapes.small,
                             colors = ButtonDefaults.buttonColors(randomColor.second),
                             onClick = {
                                 viewModel.getQuestion(option)
