@@ -2,7 +2,8 @@ package com.example.aigame.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aigame.data.entities.requests.AnswerRequest
+import com.example.aigame.data.entities.requests.ChatMessageRequest
+import com.example.aigame.data.entities.requests.Message
 import com.example.aigame.data.entities.responses.GameStorageResponse
 import com.example.aigame.data.entities.responses.QuestionResponse
 import com.example.aigame.domain.use_cases.GetGameStorageUseCase
@@ -27,31 +28,31 @@ class QuestionViewModel @Inject constructor(
     var currentLevel = 0
     var currentEnemy = 0
     var currentAnswer = 0
+    val stepHistory = ArrayList<Message>()
 
     fun getQuestion(answer: String) {
         viewModelScope.launch {
             currentAnswer++
-            val answerRequest = AnswerRequest(answer)
-            val questionResponse = getQuestionUseCase(userId = currentAnswer.toString(), sessionId = "sessionId", answerRequest = answerRequest)
+            stepHistory.add(Message("user", answer))
+            val chatMessageRequest = ChatMessageRequest("gpt-3.5-turbo", stepHistory)
+            val questionResponse = getQuestionUseCase(userId = currentAnswer.toString(), sessionId = "sessionId", chatMessageRequest = chatMessageRequest)
             if (questionResponse != null) {
-                _question.value = questionResponse
+                stepHistory.add(Message("system", questionResponse.messages.last().content))
+                _question.value = QuestionResponse(questionResponse.messages.last().content, listOf("Opcion 1","Opcion 2","Opcion 3"))
             }
         }
     }
     fun startLevel() {
         viewModelScope.launch {
-            val answerRequest = AnswerRequest(gameData.value.levels?.get(currentLevel)?.enemies?.get(currentEnemy)?.initialPrompt ?: "")
-            val questionResponse = getQuestionUseCase(userId = "userId", sessionId = "sessionId", answerRequest = answerRequest)
-            if (questionResponse != null) {
-                _question.value = questionResponse
-            }
+            stepHistory.clear()
+            getQuestion(_gameData.value.levels?.get(currentLevel)?.step?.get(currentEnemy)?.initialPrompt ?: "")
         }
     }
     fun getGameStorage(){
         viewModelScope.launch {
             val gameStorageResponse = getGameStorageUseCase()
             if (gameStorageResponse != null) {
-                _gameData.value = gameStorageResponse
+                _gameData.value = gameStorageResponse.data
             }
         }
     }

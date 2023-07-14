@@ -4,6 +4,6 @@
     app:startDestination="@id/destination_home">
     <fragment
         android:id="@+id/destination_home"
-        android:name="com.example.aigame.QuestionFragment"
+        android:name="com.example.aigame.ui.presentation.QuestionFragment"
         android:label="Home" />
 </navigation>

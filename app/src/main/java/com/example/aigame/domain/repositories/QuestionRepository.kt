@@ -1,18 +1,19 @@
 package com.example.aigame.domain.repositories
 
-import com.example.aigame.data.entities.requests.AnswerRequest
-import com.example.aigame.data.entities.responses.Enemy
+import com.example.aigame.data.entities.requests.ChatMessageRequest
+import com.example.aigame.data.entities.requests.Message
 import com.example.aigame.data.entities.responses.GameStorageResponse
 import com.example.aigame.data.entities.responses.Level
-import com.example.aigame.data.entities.responses.QuestionResponse
+import com.example.aigame.data.entities.responses.PayloadResponse
+import com.example.aigame.data.entities.responses.Step
+import com.example.aigame.data.services.OpenIaRetrofitMS
 import com.example.aigame.data.services.RetrofitMS
-import retrofit2.http.Header
 import javax.inject.Inject
 
 class QuestionRepository @Inject constructor(
     private val questionService: RetrofitMS
 ) {
-    suspend fun getGameStorage(): GameStorageResponse? {
+    suspend fun getGameStorage(): PayloadResponse<GameStorageResponse>? {
         return try {
             questionService.getGameStorage()
         } catch (e: Exception) {
@@ -21,42 +22,42 @@ class QuestionRepository @Inject constructor(
         }
     }
 
-    suspend fun getQuestion(userId: String, sessionId: String, answerRequest: AnswerRequest): QuestionResponse? {
+    suspend fun getQuestion(userId: String, sessionId: String, chatMessageRequest: ChatMessageRequest): ChatMessageRequest? {
         return try {
-            questionService.getQuestion(userId, sessionId, answerRequest)
+            questionService.getQuestion("https://api.openai.com/", "Bearer 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", chatMessageRequest)
         } catch (e: Exception) {
             println("kris "+e.message)
             createMockQuestionResponse(userId)
         }
     }
 
-    private fun createMockQuestionResponse(userId: String): QuestionResponse {
-        return QuestionResponse(
-            question = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu  $userId",
-            options = listOf("Option$userId 1", "Option$userId 2", "Option$userId 3")
+    private fun createMockQuestionResponse(userId: String): ChatMessageRequest {
+        return ChatMessageRequest(
+            model = "gpt-3.5-turbo",
+            messages = listOf(Message("user" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolo  $userId"))
         )
     }
-    private fun createMockGameStorageResponse(): GameStorageResponse {
+    private fun createMockGameStorageResponse(): PayloadResponse<GameStorageResponse> {
         val level1 = listOf(
-            Enemy("German", "Creame una historia de maximo 5 lineas donde tenga 3 opciones para elegir de no mas de 5 palabras")
+            Step("German", "enemy","Creame una historia de maximo 5 lineas donde tenga 3 opciones para elegir de no mas de 5 palabras", "", 5)
         )
         val level2 = listOf(
-            Enemy("Enemigo 2", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones"),
-            Enemy("Enemigo 3", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones"),
-            Enemy("Enemigo 4", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones")
+            Step("Enemigo 2", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5),
+            Step("Enemigo 3", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5),
+            Step("Enemigo 4", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5)
         )
         val level3 = listOf(
-            Enemy("Enemigo 5", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones"),
-            Enemy("Enemigo 6", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones")
+            Step("Enemigo 5", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5),
+            Step("Enemigo 6", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5)
         )
 
         val levels = listOf(
-            Level("Nivel 1", level1),
-            Level("Nivel 2", level2),
-            Level("Nivel 3", level3)
+            Level("Nivel 1", "", level1),
+            Level("Nivel 2", "", level2),
+            Level("Nivel 3", "", level3)
         )
 
-        return GameStorageResponse("1.0.1", "1.0.1", "1.0.0", levels)
+        return PayloadResponse<GameStorageResponse>(200, GameStorageResponse("1.0.1", "1.0.1", "1.0.0", levels))
     }
 }
 

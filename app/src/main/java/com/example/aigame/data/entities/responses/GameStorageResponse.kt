@@ -9,10 +9,14 @@ data class GameStorageResponse(
 
 data class Level(
     val name: String,
-    val enemies: List<Enemy>
+    val type: String?,
+    val step: List<Step>
 )
 
-data class Enemy(
+data class Step(
     val name: String,
-    val initialPrompt: String
+    val type: String?,
+    val initialPrompt: String,
+    val story: String,
+    val maxResponses: Int
 )
