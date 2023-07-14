@@ -14,16 +14,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AiGame"
+        android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-8059056970711952~8402676884" />
         <activity
             android:name=".ui.presentation.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
