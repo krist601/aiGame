@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,10 +26,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +51,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.aigame.R
 import com.example.aigame.data.entities.responses.QuestionResponse
 import com.example.aigame.view_models.QuestionViewModel
@@ -56,6 +64,12 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.lang.Thread.sleep
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 @AndroidEntryPoint
@@ -82,7 +96,9 @@ class QuestionFragment : Fragment() {
         val randomColor by remember { mutableStateOf(generateRandomColor()) }
 
         Box(
-            Modifier.fillMaxSize().background(color = randomColor.first)
+            Modifier
+                .fillMaxSize()
+                .background(color = randomColor.first)
         ) {
             Image(
                 painterResource(R.drawable.background),
@@ -119,14 +135,19 @@ class QuestionFragment : Fragment() {
             ) {
                 val question by viewModel.question.collectAsState()
                 Box(
-                    modifier = Modifier.background(Color.Transparent).height(350.dp),
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .height(350.dp),
                 ) {
                     val painter = rememberImagePainter(data = imageUrl)
 
-                    Box(modifier = Modifier.background(Color.Transparent).padding(end = 32.dp, start = 32.dp, top = 48.dp, bottom = 32.dp)) {
+                    Box(modifier = Modifier
+                        .background(Color.Transparent)
+                        .padding(end = 32.dp, start = 32.dp, top = 48.dp, bottom = 32.dp)) {
                         Image(
                             painterResource(R.drawable.image_background),
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .background(Color.Transparent)
                                 .clip(RoundedCornerShape(8)),
                             contentDescription = "",
@@ -141,18 +162,27 @@ class QuestionFragment : Fragment() {
                             painter = painter,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .height(250.dp)
                                 .align(Alignment.BottomCenter)
                         )
                     }
                     Text(
-                        text = "Your Text",
+                        text = "Dragon",
                         color = Color.White,
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(16.dp)
+                    )
+                    Text(
+                        text = "Dragonastico",
+                        color = Color.LightGray,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = 56.dp, start = 24.dp)
                     )
                 }
 
@@ -171,70 +201,12 @@ class QuestionFragment : Fragment() {
             }
         }
     }
-    /*@Composable
-    fun FlipCard() {
-
-        var rotated by remember { mutableStateOf(false) }
-
-        val rotation by animateFloatAsState(
-            targetValue = if (rotated) 180f else 0f,
-            animationSpec = tween(500)
-        )
-
-        val animateFront by animateFloatAsState(
-            targetValue = if (!rotated) 1f else 0f,
-            animationSpec = tween(500)
-        )
-
-        val animateBack by animateFloatAsState(
-            targetValue = if (rotated) 1f else 0f,
-            animationSpec = tween(500)
-        )
-
-        val animateColor by animateColorAsState(
-            targetValue = if (rotated) Color.Red else Color.Blue,
-            animationSpec = tween(500)
-        )
-
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Card(
-                Modifier
-                    .fillMaxSize(.5f)
-                    .graphicsLayer {
-                        rotationY = rotation
-                        cameraDistance = 8 * density
-                    }
-                    .clickable {
-                        rotated = !rotated
-                    },
-                backgroundColor = animateColor
-            )
-            {
-                Column(
-                    Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Text(text = if (rotated) "Back" else "Front",
-                         modifier = Modifier
-                        .graphicsLayer {
-                            alpha = if (rotated) animateBack else animateFront
-                            rotationY = rotation
-                        })
-                }
-
-            }
-        }
-    }*/
 
     @Composable
     fun LoadCard(question: QuestionResponse, randomColor: Pair<Color,Color>){
-        var visible by remember { mutableStateOf(false) }
+        var visible by remember { mutableStateOf(0) }
         var rotated by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
 
         val rotation by animateFloatAsState(
             targetValue = if (rotated) 180f else 0f,
@@ -257,13 +229,12 @@ class QuestionFragment : Fragment() {
                     rotationY = rotation
                     cameraDistance = 8 * density
                 }
-                .clickable {
-                    rotated = !rotated
-                    visible = !visible
-                }
+                /*.clickable {
+                    visible = 0
+                }*/
         )
         {
-            if (!visible) {
+            if (visible == 0) {
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
@@ -285,14 +256,13 @@ class QuestionFragment : Fragment() {
                         shape = MaterialTheme.shapes.small,
                         colors = ButtonDefaults.buttonColors(randomColor.second),
                         onClick = {
-                            visible = true
-                            flipCard()
+                            visible = 1
+                            rotated = !rotated
                         }) {
                         Text(text = "Continue")
                     }
                 }
-            }
-            if (visible) {
+            }else if (visible == 1) {
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
@@ -300,7 +270,6 @@ class QuestionFragment : Fragment() {
                             alpha = if (rotated) animateBack else animateFront
                             rotationY = 180f
                         }
-
                 ) {
                     Text(
                         modifier = Modifier
@@ -318,19 +287,37 @@ class QuestionFragment : Fragment() {
                             shape = MaterialTheme.shapes.small,
                             colors = ButtonDefaults.buttonColors(randomColor.second),
                             onClick = {
-                                viewModel.getQuestion(option)
+                                visible = 2
+                                //viewModel.getQuestion(option)
                                 //randomColor = generateRandomColor()
-                                visible = false
-                            }) {
+                                scope.launch {
+                                    delay(3000)
+                                    visible = 0
+                                    rotated = !rotated
+                                }
+                            }
+                        ) {
                             Text(text = option)
-
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }else if (visible == 2) {
+                Card(
+                    modifier = Modifier
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LottieAnimationExample()
+                    }
+                }
             }
         }
     }
+
     private fun generateRandomColor(): Pair<Color, Color> {
         val random = Random.Default
         val firstRandom = random.nextInt(2)
@@ -342,9 +329,23 @@ class QuestionFragment : Fragment() {
         val blueLight = if (firstRandom == 2) 0 else if (blue > 236) 256 else blue + 20
         return Pair(Color(red, green, blue), Color(redLight, greenLight, blueLight))
     }
+    @Composable
+    fun LottieAnimationExample() {
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.RawRes(R.raw.animation2)
+        )
+        val progress by animateLottieCompositionAsState(
+            composition,
+            iterations = LottieConstants.IterateForever,
+            restartOnPlay = false
 
-    fun flipCard(){
+        )
 
+        LottieAnimation(
+            modifier = Modifier.height(100.dp).width(100.dp),
+            composition = composition,
+            progress = progress,
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
