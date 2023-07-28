@@ -3,8 +3,7 @@ package com.example.aigame.data.entities.responses
 data class GameStorageResponse(
     val actualVersion: String = "",
     val jsonVersion: String = "",
-    val minVersion: String = "",
-    val levels: List<Level>? = null
+    val minVersion: String = ""
 )
 
 data class Level(

@@ -1,7 +1,6 @@
 package com.example.aigame.di.module
 
 import com.example.aigame.data.services.CustomInterceptor
-import com.example.aigame.data.services.OpenIaRetrofitMS
 import com.example.aigame.data.services.RetrofitMS
 import com.example.aigame.domain.repositories.QuestionRepository
 import com.squareup.moshi.Moshi

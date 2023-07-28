@@ -1,63 +1,70 @@
 package com.example.aigame.domain.repositories
 
-import com.example.aigame.data.entities.requests.ChatMessageRequest
-import com.example.aigame.data.entities.requests.Message
-import com.example.aigame.data.entities.responses.GameStorageResponse
-import com.example.aigame.data.entities.responses.Level
-import com.example.aigame.data.entities.responses.PayloadResponse
-import com.example.aigame.data.entities.responses.Step
-import com.example.aigame.data.services.OpenIaRetrofitMS
 import com.example.aigame.data.services.RetrofitMS
+import com.example.aigame.domain.entities.ChapterEntity
+import com.example.aigame.domain.entities.InterfaceResources
+import com.example.aigame.domain.entities.Option
+import com.example.aigame.domain.entities.mapChapterToChapterEntity
 import javax.inject.Inject
 
 class QuestionRepository @Inject constructor(
     private val questionService: RetrofitMS
 ) {
-    suspend fun getGameStorage(): PayloadResponse<GameStorageResponse>? {
+
+    suspend fun getChapter(chapterId: String): ChapterEntity? {
         return try {
-            questionService.getGameStorage()
+            mapChapterToChapterEntity(questionService.getChapter(chapterId))
         } catch (e: Exception) {
-            println("kris "+e.message)
-            createMockGameStorageResponse()
+            createMockChapterResponse(chapterId)
         }
     }
 
-    suspend fun getQuestion(userId: String, sessionId: String, chatMessageRequest: ChatMessageRequest): ChatMessageRequest? {
-        return try {
-            questionService.getQuestion("https://api.openai.com/", "Bearer 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", chatMessageRequest)
-        } catch (e: Exception) {
-            println("kris "+e.message)
-            createMockQuestionResponse(userId)
-        }
-    }
-
-    private fun createMockQuestionResponse(userId: String): ChatMessageRequest {
-        return ChatMessageRequest(
-            model = "gpt-3.5-turbo",
-            messages = listOf(Message("user" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolo  $userId"))
-        )
-    }
-    private fun createMockGameStorageResponse(): PayloadResponse<GameStorageResponse> {
-        val level1 = listOf(
-            Step("German", "enemy","Creame una historia de maximo 5 lineas donde tenga 3 opciones para elegir de no mas de 5 palabras", "", 5)
-        )
-        val level2 = listOf(
-            Step("Enemigo 2", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5),
-            Step("Enemigo 3", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5),
-            Step("Enemigo 4", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5)
-        )
-        val level3 = listOf(
-            Step("Enemigo 5", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5),
-            Step("Enemigo 6", "enemy", "construye un enemigo con maximo 5 preguntas y tenga 3 opciones", "", 5)
+    private fun createMockChapterResponse(userId: String): ChapterEntity {
+        val interfaceResources = InterfaceResources(
+            title = "Raccoon",
+            subtitle = "of the evil death",
+            image = "https://static.wikia.nocookie.net/clash-of-clans/images/c/c5/Dragón_info.png/revision/latest/scale-to-width-down/120?cb=20210819010118&path-prefix=es"
         )
 
-        val levels = listOf(
-            Level("Nivel 1", "", level1),
-            Level("Nivel 2", "", level2),
-            Level("Nivel 3", "", level3)
+        // Create mock Options
+        val option1 = Option(
+            question = "you find the raccoon of the evil death, he tries to rape you, what do you want to do?",
+            options = listOf(
+                Option(
+                    text = "Let it rape you",
+                    question = "Question for Option 2",
+                    options = null
+                ),
+                Option(
+                    text = "Take the wheels in the rape",
+                    question = "You star to enjoy it, and got in a mad state that tries to fuck other animals in the surrounded area",
+                    options = listOf(
+                        Option(
+                            text = "Rape a bunny",
+                            question = "You enjoy it, good for you you sick bastard",
+                            options = null
+                        ),
+                        Option(
+                            text = "Rape a chicken",
+                            question = "You enjoy it, good for you you sick bastard",
+                            options = null
+                        ),
+                        Option(
+                            text = "Rape a squirrel",
+                            question = "You enjoy it, good for you you sick bastard",
+                            options = null
+                        )
+                    )
+                ),
+                Option(
+                    text = "Run like a little bunny",
+                    question = "you are so gay, you die of venereal disease",
+                    options = null
+                ),
+            )
         )
 
-        return PayloadResponse<GameStorageResponse>(200, GameStorageResponse("1.0.1", "1.0.1", "1.0.0", levels))
+        return ChapterEntity(interfaceResources = interfaceResources, branch = option1)
     }
 }
 

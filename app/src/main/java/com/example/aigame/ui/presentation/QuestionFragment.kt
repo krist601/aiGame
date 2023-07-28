@@ -8,8 +8,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,11 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -57,7 +53,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.aigame.R
-import com.example.aigame.data.entities.responses.QuestionResponse
+import com.example.aigame.domain.entities.Option
 import com.example.aigame.view_models.QuestionViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -66,10 +62,6 @@ import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.lang.Thread.sleep
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 @AndroidEntryPoint
@@ -114,6 +106,10 @@ class QuestionFragment : Fragment() {
         val context = LocalContext.current
         MobileAds.initialize(context)
 
+        val chapter by viewModel.chapterData.collectAsState()
+        val option by viewModel.optionData.collectAsState()
+
+        val imageUrl = chapter.interfaceResources?.image ?: ""
         val adView = remember {
             AdView(context).apply {
                 adSize = AdSize.FLUID
@@ -122,7 +118,7 @@ class QuestionFragment : Fragment() {
             }
         }
 
-        val imageUrl = "https://static.wikia.nocookie.net/clash-of-clans/images/c/c5/Dragón_info.png/revision/latest/scale-to-width-down/120?cb=20210819010118&path-prefix=es"
+        //val imageUrl = "https://static.wikia.nocookie.net/clash-of-clans/images/c/c5/Dragón_info.png/revision/latest/scale-to-width-down/120?cb=20210819010118&path-prefix=es"
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -133,7 +129,6 @@ class QuestionFragment : Fragment() {
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                val question by viewModel.question.collectAsState()
                 Box(
                     modifier = Modifier
                         .background(Color.Transparent)
@@ -169,7 +164,7 @@ class QuestionFragment : Fragment() {
                         )
                     }
                     Text(
-                        text = "Dragon",
+                        text = chapter.interfaceResources?.title.orEmpty(),
                         color = Color.White,
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold,
@@ -177,7 +172,7 @@ class QuestionFragment : Fragment() {
                             .padding(16.dp)
                     )
                     Text(
-                        text = "Dragonastico",
+                        text = chapter.interfaceResources?.subtitle.orEmpty(),
                         color = Color.LightGray,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
@@ -187,7 +182,7 @@ class QuestionFragment : Fragment() {
                 }
 
                 //LoadCard()
-                LoadCard(question, randomColor)
+                LoadCard(option, randomColor)
 
             }
             Column(
@@ -203,7 +198,7 @@ class QuestionFragment : Fragment() {
     }
 
     @Composable
-    fun LoadCard(question: QuestionResponse, randomColor: Pair<Color,Color>){
+    fun LoadCard(option: Option, randomColor: Pair<Color,Color>){
         var visible by remember { mutableStateOf(0) }
         var rotated by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
@@ -242,24 +237,31 @@ class QuestionFragment : Fragment() {
                             alpha = if (rotated) animateBack else animateFront
                         }
                 ) {
-                    Text(
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
                         modifier = Modifier
-                            .padding(top = 16.dp, bottom = 16.dp, end = 32.dp, start = 32.dp),
-                        text = question.question,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Button(
-                        modifier = Modifier
-                            .padding(top = 0.dp, bottom = 16.dp, end = 32.dp, start = 32.dp)
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp),
-                        shape = MaterialTheme.shapes.small,
-                        colors = ButtonDefaults.buttonColors(randomColor.second),
-                        onClick = {
-                            visible = 1
-                            rotated = !rotated
-                        }) {
-                        Text(text = "Continue")
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
+                            text = option.question,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(
+                            modifier = Modifier
+                                .padding(top = 0.dp, bottom = 16.dp, end = 32.dp, start = 32.dp)
+                                .fillMaxWidth(),
+                            shape = MaterialTheme.shapes.small,
+                            colors = ButtonDefaults.buttonColors(randomColor.second),
+                            onClick = {
+                                visible = 1
+                                rotated = !rotated
+                            }) {
+                            Text(text = "Continue")
+                        }
                     }
                 }
             }else if (visible == 1) {
@@ -278,7 +280,7 @@ class QuestionFragment : Fragment() {
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    question.options?.forEach { option ->
+                    option.options?.forEach { leOption ->
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -294,10 +296,11 @@ class QuestionFragment : Fragment() {
                                     delay(3000)
                                     visible = 0
                                     rotated = !rotated
+                                    viewModel.setNewQuestion(leOption)
                                 }
                             }
                         ) {
-                            Text(text = option)
+                            Text(text = leOption.text)
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -332,7 +335,7 @@ class QuestionFragment : Fragment() {
     @Composable
     fun LottieAnimationExample() {
         val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(R.raw.animation2)
+            spec = LottieCompositionSpec.RawRes(R.raw.animation_book)
         )
         val progress by animateLottieCompositionAsState(
             composition,
@@ -347,15 +350,9 @@ class QuestionFragment : Fragment() {
             progress = progress,
         )
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewModel.gameData.collect {
-                viewModel.startLevel()
-            }
-        }
-        viewModel.getGameStorage()
+        viewModel.getChapter("")
     }
     @Preview
     @Composable
