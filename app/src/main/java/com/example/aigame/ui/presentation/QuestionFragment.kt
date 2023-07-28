@@ -85,19 +85,19 @@ class QuestionFragment : Fragment() {
     @Composable
     fun View(){
 
-        val randomColor by remember { mutableStateOf(generateRandomColor()) }
+        //val randomColor by remember { mutableStateOf(generateRandomColor()) }
 
         Box(
             Modifier
                 .fillMaxSize()
-                .background(color = randomColor.first)
+                //.background(color = randomColor.first)
         ) {
             Image(
-                painterResource(R.drawable.background),
-                contentDescription = "",
+                painterResource(R.drawable.detective_background_blur),
+                contentDescription = "desc",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize())
-            InnerView(randomColor)
+            InnerView(Pair(Color.Blue, Color.Blue))
         }
 
     }
@@ -117,8 +117,6 @@ class QuestionFragment : Fragment() {
                 loadAd(AdRequest.Builder().build())
             }
         }
-
-        //val imageUrl = "https://static.wikia.nocookie.net/clash-of-clans/images/c/c5/Dragón_info.png/revision/latest/scale-to-width-down/120?cb=20210819010118&path-prefix=es"
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -140,7 +138,7 @@ class QuestionFragment : Fragment() {
                         .background(Color.Transparent)
                         .padding(end = 32.dp, start = 32.dp, top = 48.dp, bottom = 32.dp)) {
                         Image(
-                            painterResource(R.drawable.image_background),
+                            painterResource(R.drawable.card),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(Color.Transparent)
@@ -180,10 +178,7 @@ class QuestionFragment : Fragment() {
                             .padding(top = 56.dp, start = 24.dp)
                     )
                 }
-
-                //LoadCard()
                 LoadCard(option, randomColor)
-
             }
             Column(
                 modifier = Modifier
@@ -290,8 +285,6 @@ class QuestionFragment : Fragment() {
                             colors = ButtonDefaults.buttonColors(randomColor.second),
                             onClick = {
                                 visible = 2
-                                //viewModel.getQuestion(option)
-                                //randomColor = generateRandomColor()
                                 scope.launch {
                                     delay(3000)
                                     visible = 0
@@ -335,7 +328,7 @@ class QuestionFragment : Fragment() {
     @Composable
     fun LottieAnimationExample() {
         val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(R.raw.animation_book)
+            spec = LottieCompositionSpec.RawRes(R.raw.fingerprint_animation)
         )
         val progress by animateLottieCompositionAsState(
             composition,
@@ -345,7 +338,7 @@ class QuestionFragment : Fragment() {
         )
 
         LottieAnimation(
-            modifier = Modifier.height(100.dp).width(100.dp),
+            modifier = Modifier.height(300.dp).width(300.dp),
             composition = composition,
             progress = progress,
         )
