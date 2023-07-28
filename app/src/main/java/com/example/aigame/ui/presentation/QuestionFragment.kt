@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @AndroidEntryPoint
-class QuestionFragment : Fragment() {
+class QuestionFragment() : Fragment() {
     private val viewModel: QuestionViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -224,7 +224,41 @@ class QuestionFragment : Fragment() {
                 }*/
         )
         {
-            if (visible == 0) {
+            if (option.options.isNullOrEmpty() && option.nextCanonicalEventId == null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            alpha = if (rotated) animateBack else animateFront
+                        }
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
+                            text = option.question,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(
+                            modifier = Modifier
+                                .padding(top = 0.dp, bottom = 16.dp, end = 32.dp, start = 32.dp)
+                                .fillMaxWidth(),
+                            shape = MaterialTheme.shapes.small,
+                            colors = ButtonDefaults.buttonColors(randomColor.second),
+                            onClick = {
+                                backButtonPress()
+                            }) {
+                            Text(text = "Back")
+                        }
+                    }
+                }
+            }else if (visible == 0) {
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
@@ -312,6 +346,9 @@ class QuestionFragment : Fragment() {
                 }
             }
         }
+    }
+    fun backButtonPress(){
+        requireFragmentManager().popBackStack()
     }
 
     private fun generateRandomColor(): Pair<Color, Color> {

@@ -42,16 +42,19 @@ class QuestionRepository @Inject constructor(
                         Option(
                             text = "Rape a bunny",
                             question = "You enjoy it, good for you you sick bastard",
+                            nextCanonicalEventId = "1",
                             options = null
                         ),
                         Option(
                             text = "Rape a chicken",
                             question = "You enjoy it, good for you you sick bastard",
+                            nextCanonicalEventId = "1",
                             options = null
                         ),
                         Option(
                             text = "Rape a squirrel",
                             question = "You enjoy it, good for you you sick bastard",
+                            nextCanonicalEventId = "1",
                             options = null
                         )
                     )
