@@ -1,7 +1,7 @@
 package com.example.aigame.data.entities.responses
 
 data class ChapterResponse(
-    val interfaceResources: InterfaceResourcesResponse,
+    val interfaceResources: InterfaceResourcesResponse?,
     val branch: OptionResponse
 )
 
@@ -12,6 +12,7 @@ data class InterfaceResourcesResponse(
 )
 
 data class OptionResponse(
+    val option: String,
     val text: String,
     val question: String,
     val options: List<OptionResponse>?,

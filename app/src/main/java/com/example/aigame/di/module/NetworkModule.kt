@@ -19,7 +19,7 @@ class NetworkModule {
     fun provideMoshi(): Moshi = Moshi.Builder().build()
 
     val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(CustomInterceptor())
+        //.addInterceptor(CustomInterceptor())
         .build()
     @Provides
     fun provideRetrofit(moshi: Moshi): Retrofit = Retrofit.Builder()

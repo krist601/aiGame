@@ -241,7 +241,7 @@ class QuestionFragment() : Fragment() {
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
-                            text = option.text,
+                            text = option.text ?: "",
                             style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -275,7 +275,7 @@ class QuestionFragment() : Fragment() {
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
-                            text = option.text,
+                            text = option.text ?: "",
                             style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -305,7 +305,7 @@ class QuestionFragment() : Fragment() {
                     Text(
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 8.dp, end = 32.dp, start = 32.dp),
-                        text = option.question,
+                        text = option.question ?: "",
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -327,7 +327,7 @@ class QuestionFragment() : Fragment() {
                                 }
                             }
                         ) {
-                            Text(text = leOption.option)
+                            Text(text = leOption.option ?: "")
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))

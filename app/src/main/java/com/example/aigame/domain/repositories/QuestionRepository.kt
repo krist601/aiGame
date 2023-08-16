@@ -15,6 +15,7 @@ class QuestionRepository @Inject constructor(
         return try {
             mapChapterToChapterEntity(questionService.getChapter(chapterId, "cULuJB9amm39kEN3hFViaahdnmkAu3616KXiQZG8"))
         } catch (e: Exception) {
+            println("ChatGame error "+e.message)
             createMockChapterResponse(chapterId)
         }
     }

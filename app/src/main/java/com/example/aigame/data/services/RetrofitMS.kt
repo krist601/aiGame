@@ -6,6 +6,6 @@ import retrofit2.http.Header
 import retrofit2.http.Path
 
 interface RetrofitMS {
-    @GET("/S1/chapters/")
+    @GET("/story/stories/seasons/S1/chapters/{id}")
     suspend fun getChapter(@Path("id") id: String, @Header("x-api-key") secret: String): ChapterResponse
 }

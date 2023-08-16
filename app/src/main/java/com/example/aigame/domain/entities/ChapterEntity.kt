@@ -10,15 +10,15 @@ data class ChapterEntity(
 )
 
 data class InterfaceResources(
-    val title: String,
-    val subtitle: String,
-    val image: String
+    val title: String?,
+    val subtitle: String?,
+    val image: String?
 )
 
 data class Option(
-    val option: String = "",
-    val text: String = "",
-    val question: String = "",
+    val option: String? = null,
+    val text: String? = null,
+    val question: String? = null,
     val options: List<Option>? = null,
     val nextCanonicalEventId: String? = null
 )
@@ -33,15 +33,16 @@ fun mapChapterToChapterEntity(chapter: ChapterResponse): ChapterEntity {
 fun mapOptionToOption(option: OptionResponse): Option {
     return Option(
         text = option.text,
+        option = option.option,
         question = option.question,
         options = option.options?.map { mapOptionToOption(it) },
         nextCanonicalEventId = option.nextCanonicalEventId
     )
 }
-fun mapInterfaceResourcesToInterfaceResourcesEntity(interfaceResource: InterfaceResourcesResponse): InterfaceResources {
+fun mapInterfaceResourcesToInterfaceResourcesEntity(interfaceResource: InterfaceResourcesResponse?): InterfaceResources {
     return InterfaceResources(
-        title = interfaceResource.title,
-        subtitle = interfaceResource.subtitle,
-        image = interfaceResource.image
+        title = interfaceResource?.title,
+        subtitle = interfaceResource?.subtitle,
+        image = interfaceResource?.image
     )
 }
