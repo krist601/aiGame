@@ -241,8 +241,8 @@ class QuestionFragment() : Fragment() {
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
-                            text = option.question,
-                            style = MaterialTheme.typography.titleLarge
+                            text = option.text,
+                            style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
@@ -275,8 +275,8 @@ class QuestionFragment() : Fragment() {
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
-                            text = option.question,
-                            style = MaterialTheme.typography.titleLarge
+                            text = option.text,
+                            style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
@@ -305,7 +305,7 @@ class QuestionFragment() : Fragment() {
                     Text(
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 8.dp, end = 32.dp, start = 32.dp),
-                        text = "cual de las deciciones te decides por decidir?",
+                        text = option.question,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -327,7 +327,7 @@ class QuestionFragment() : Fragment() {
                                 }
                             }
                         ) {
-                            Text(text = leOption.text)
+                            Text(text = leOption.option)
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -382,7 +382,7 @@ class QuestionFragment() : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getChapter("")
+        viewModel.getChapter("CH3S1")
     }
     @Preview
     @Composable

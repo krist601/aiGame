@@ -16,6 +16,7 @@ data class InterfaceResources(
 )
 
 data class Option(
+    val option: String = "",
     val text: String = "",
     val question: String = "",
     val options: List<Option>? = null,

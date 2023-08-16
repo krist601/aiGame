@@ -8,6 +8,7 @@ class CustomInterceptor: Interceptor {
         // Get the original request from the chain
         val originalRequest = chain.request()
 
+        println("Request: ${originalRequest.url()} ${originalRequest.method()} ${originalRequest.body()}")
         // Perform any modifications to the request if needed
         val modifiedRequest = originalRequest.newBuilder()
             // Add or modify headers
@@ -21,6 +22,8 @@ class CustomInterceptor: Interceptor {
             // Add or modify headers
             // .addHeader("Custom-Header", "Value")
             .build()
+        println("Response: ${response.code()} ${response.message()}")
+        println(response.body()?.string())
 
         // Return the modified response
         return modifiedResponse
