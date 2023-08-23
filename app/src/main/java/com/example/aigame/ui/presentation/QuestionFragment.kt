@@ -39,6 +39,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +57,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.aigame.R
 import com.example.aigame.domain.entities.Option
+import com.example.aigame.ui.theme.accent
+import com.example.aigame.ui.theme.buddyChampionFamily
 import com.example.aigame.view_models.QuestionViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -93,11 +98,11 @@ class QuestionFragment() : Fragment() {
                 //.background(color = randomColor.first)
         ) {
             Image(
-                painterResource(R.drawable.detective_background_blur),
+                painterResource(R.drawable.detective_background_blur_bw),
                 contentDescription = "desc",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize())
-            InnerView(Pair(Color.Blue, Color.Blue))
+            InnerView(Pair(accent, accent))
         }
 
     }
@@ -167,13 +172,15 @@ class QuestionFragment() : Fragment() {
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        fontFamily = buddyChampionFamily,
                     )
                     Text(
                         text = chapter.interfaceResources?.subtitle.orEmpty(),
                         color = Color.LightGray,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
+                        fontFamily = buddyChampionFamily,
                         modifier = Modifier
                             .padding(top = 56.dp, start = 24.dp)
                     )
@@ -242,6 +249,7 @@ class QuestionFragment() : Fragment() {
                             modifier = Modifier
                                 .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
                             text = option.text ?: "",
+                            fontFamily = buddyChampionFamily,
                             style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -254,7 +262,8 @@ class QuestionFragment() : Fragment() {
                             onClick = {
                                 backButtonPress()
                             }) {
-                            Text(text = "Back")
+                            Text(
+                                fontFamily = buddyChampionFamily,text = "Back")
                         }
                     }
                 }
@@ -276,7 +285,8 @@ class QuestionFragment() : Fragment() {
                             modifier = Modifier
                                 .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
                             text = option.text ?: "",
-                            style = MaterialTheme.typography.bodySmall
+                            fontFamily = buddyChampionFamily,
+                            //style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
@@ -289,7 +299,8 @@ class QuestionFragment() : Fragment() {
                                 visible = 1
                                 rotated = !rotated
                             }) {
-                            Text(text = "Continue")
+                            Text(
+                                fontFamily = buddyChampionFamily,text = "Continue")
                         }
                     }
                 }
@@ -306,6 +317,7 @@ class QuestionFragment() : Fragment() {
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 8.dp, end = 32.dp, start = 32.dp),
                         text = option.question ?: "",
+                        fontFamily = buddyChampionFamily,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -327,7 +339,8 @@ class QuestionFragment() : Fragment() {
                                 }
                             }
                         ) {
-                            Text(text = leOption.option ?: "")
+                            Text(
+                                fontFamily = buddyChampionFamily,text = leOption.option ?: "")
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))

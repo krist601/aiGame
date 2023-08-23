@@ -13,7 +13,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
+import com.example.aigame.R
 
 private val DarkColorScheme = darkColorScheme(
         primary = Purple80,
@@ -68,3 +72,7 @@ fun AiGameTheme(
             content = content
     )
 }
+
+val buddyChampionFamily = FontFamily(
+    Font(R.font.buddychampion, FontWeight.Light),
+)
