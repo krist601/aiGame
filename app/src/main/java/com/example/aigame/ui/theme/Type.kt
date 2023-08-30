@@ -1,10 +1,14 @@
 package com.example.aigame.ui.theme
 
+import android.content.Context
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.NativePaint
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.core.content.res.ResourcesCompat
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -32,3 +36,21 @@ val Typography = Typography(
     )
     */
 )
+
+fun getNativePaint(context: Context, textSizeFloat: Float, stroke: Boolean): NativePaint{
+        val customTypeface = ResourcesCompat.getFont(context, com.example.aigame.R.font.buddychampion)
+        return Paint().asFrameworkPaint().apply {
+                isAntiAlias = true
+                textSize = textSizeFloat
+                typeface = customTypeface
+                if(stroke){
+                        color = android.graphics.Color.BLACK
+                        style = android.graphics.Paint.Style.STROKE
+                        strokeWidth = 12f
+                        strokeMiter= 10f
+                }else{
+                        style = android.graphics.Paint.Style.FILL
+                        color = android.graphics.Color.WHITE
+                }
+        }
+}

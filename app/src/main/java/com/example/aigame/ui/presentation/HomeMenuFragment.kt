@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -35,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.aigame.R
 import com.example.aigame.ui.theme.accent
 import com.example.aigame.ui.theme.buddyChampionFamily
+import com.example.aigame.ui.theme.getNativePaint
 import com.example.aigame.ui.theme.grayCard
 
 class HomeMenuFragment : Fragment() {
@@ -68,14 +72,16 @@ class HomeMenuFragment : Fragment() {
             )
             Box(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(top = 30.dp),
-                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    fontSize = 60.sp,
-                    fontFamily = buddyChampionFamily,
-                    text = "Uncertain",
-                    textAlign = TextAlign.Center, // Center the text horizontally
-                    color = Color.White // Change the text color as needed
+                Canvas(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    onDraw = {
+                        drawIntoCanvas {
+                            it.nativeCanvas.drawText("Uncertain", 40f, 30.dp.toPx(), getNativePaint(requireContext(), 204f, true))
+                            it.nativeCanvas.drawText("Uncertain", 40f, 30.dp.toPx(), getNativePaint(requireContext(), 204f, false))
+                        }
+                    }
                 )
             }
             Column(modifier = Modifier
@@ -88,9 +94,9 @@ class HomeMenuFragment : Fragment() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(30.dp), // Margin of 30dp
-                    //colors = CardDefaults.cardColors(
-                    //    containerColor = grayCard
-                    //),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    ),
                 ) {
                     // Content of your card goes here
                     Column(
@@ -106,75 +112,75 @@ class HomeMenuFragment : Fragment() {
                             colors = ButtonDefaults.buttonColors(accent),
                             onClick = {
 
-                                val fragment = QuestionFragment()
+                                val fragment = QuestionFragment(true)
                                 requireFragmentManager().beginTransaction()
                                     .replace(R.id.fragmentContainer, fragment)
                                     .addToBackStack(null)
                                     .commit()
                             }) {
                             Text(
-                                fontSize = 24.sp,
+                                fontSize = 16.sp,
                                 fontFamily = buddyChampionFamily,
                                 text = "New Game"
                             )
                         }
-
                         Button(
                             modifier = Modifier.fillMaxWidth().padding(end = 20.dp, start = 20.dp, top = 8.dp),
                             shape = MaterialTheme.shapes.small,
                             colors = ButtonDefaults.buttonColors(accent),
                             onClick = {
 
-                                val fragment = QuestionFragment()
+                                val fragment = QuestionFragment(false)
                                 requireFragmentManager().beginTransaction()
                                     .replace(R.id.fragmentContainer, fragment)
                                     .addToBackStack(null)
                                     .commit()
                             }) {
                             Text(
-                                fontSize = 24.sp,
+                                fontSize = 16.sp,
                                 fontFamily = buddyChampionFamily,
                                 text = "Continue"
                             )
                         }
 
-                        Button(
-                            modifier = Modifier.fillMaxWidth().padding(end = 20.dp, start = 20.dp, top = 8.dp),
-                            shape = MaterialTheme.shapes.small,
-                            colors = ButtonDefaults.buttonColors(accent),
-                            onClick = {
+                        /*
+                                                Button(
+                                                    modifier = Modifier.fillMaxWidth().padding(end = 20.dp, start = 20.dp, top = 8.dp),
+                                                    shape = MaterialTheme.shapes.small,
+                                                    colors = ButtonDefaults.buttonColors(accent),
+                                                    onClick = {
 
-                                val fragment = QuestionFragment()
-                                requireFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, fragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }) {
-                            Text(
-                                fontSize = 24.sp,
-                                fontFamily = buddyChampionFamily,
-                                text = "Options"
-                            )
-                        }
+                                                        val fragment = QuestionFragment()
+                                                        requireFragmentManager().beginTransaction()
+                                                            .replace(R.id.fragmentContainer, fragment)
+                                                            .addToBackStack(null)
+                                                            .commit()
+                                                    }) {
+                                                    Text(
+                                                        fontSize = 16.sp,
+                                                        fontFamily = buddyChampionFamily,
+                                                        text = "Options"
+                                                    )
+                                                }
 
-                        Button(
-                            modifier = Modifier.fillMaxWidth().padding(end = 20.dp, start = 20.dp, top = 8.dp),
-                            shape = MaterialTheme.shapes.small,
-                            colors = ButtonDefaults.buttonColors(accent),
-                            onClick = {
+                                                Button(
+                                                    modifier = Modifier.fillMaxWidth().padding(end = 20.dp, start = 20.dp, top = 8.dp),
+                                                    shape = MaterialTheme.shapes.small,
+                                                    colors = ButtonDefaults.buttonColors(accent),
+                                                    onClick = {
 
-                                val fragment = QuestionFragment()
-                                requireFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, fragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }) {
-                            Text(
-                                fontSize = 24.sp,
-                                fontFamily = buddyChampionFamily,
-                                text = "Credit"
-                            )
-                        }
+                                                        val fragment = QuestionFragment()
+                                                        requireFragmentManager().beginTransaction()
+                                                            .replace(R.id.fragmentContainer, fragment)
+                                                            .addToBackStack(null)
+                                                            .commit()
+                                                    }) {
+                                                    Text(
+                                                        fontSize = 16.sp,
+                                                        fontFamily = buddyChampionFamily,
+                                                        text = "Credit"
+                                                    )
+                                                }*/
                     }
                 }
                 /*Button(onClick = onContinueGameClicked) {

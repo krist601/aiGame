@@ -16,6 +16,7 @@ data class InterfaceResources(
 )
 
 data class Option(
+    val id: String? = null,
     val option: String? = null,
     val text: String? = null,
     val question: String? = null,
@@ -25,13 +26,14 @@ data class Option(
 
 fun mapChapterToChapterEntity(chapter: ChapterResponse): ChapterEntity {
     return ChapterEntity(
-        interfaceResources = mapInterfaceResourcesToInterfaceResourcesEntity(chapter.interfaceResources),
+        interfaceResources = mapInterfaceResourcesToInterfaceResourcesEntity(chapter.interface_resource),
         branch = mapOptionToOption(chapter.branch)
     )
 }
 
 fun mapOptionToOption(option: OptionResponse): Option {
     return Option(
+        id = option.id,
         text = option.text,
         option = option.option,
         question = option.question,
@@ -42,7 +44,7 @@ fun mapOptionToOption(option: OptionResponse): Option {
 fun mapInterfaceResourcesToInterfaceResourcesEntity(interfaceResource: InterfaceResourcesResponse?): InterfaceResources {
     return InterfaceResources(
         title = interfaceResource?.title,
-        subtitle = interfaceResource?.subtitle,
+        subtitle = interfaceResource?.sub_title,
         image = interfaceResource?.image
     )
 }

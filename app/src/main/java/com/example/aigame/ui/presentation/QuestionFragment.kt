@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,19 +36,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.NativePaint
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import coil.compose.rememberImagePainter
@@ -58,7 +63,10 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.aigame.R
 import com.example.aigame.domain.entities.Option
 import com.example.aigame.ui.theme.accent
+import com.example.aigame.ui.theme.accentSubtitle
+import com.example.aigame.ui.theme.accentTitle
 import com.example.aigame.ui.theme.buddyChampionFamily
+import com.example.aigame.ui.theme.getNativePaint
 import com.example.aigame.view_models.QuestionViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -69,8 +77,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+
 @AndroidEntryPoint
-class QuestionFragment() : Fragment() {
+class QuestionFragment(
+    private val isNewGame: Boolean? = null
+): Fragment() {
+
     private val viewModel: QuestionViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -114,6 +126,13 @@ class QuestionFragment() : Fragment() {
         val chapter by viewModel.chapterData.collectAsState()
         val option by viewModel.optionData.collectAsState()
 
+        isNewGame?.let{
+            if(it)
+                viewModel.getChapter("CH3S1")
+            else
+                viewModel.getSavedGame()
+        }
+
         val imageUrl = chapter.interfaceResources?.image ?: ""
         val adView = remember {
             AdView(context).apply {
@@ -139,50 +158,35 @@ class QuestionFragment() : Fragment() {
                 ) {
                     val painter = rememberImagePainter(data = imageUrl)
 
-                    Box(modifier = Modifier
-                        .background(Color.Transparent)
-                        .padding(end = 32.dp, start = 32.dp, top = 48.dp, bottom = 32.dp)) {
-                        Image(
-                            painterResource(R.drawable.card),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Transparent)
-                                .clip(RoundedCornerShape(8)),
-                            contentDescription = "",
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-                    Box(
+                    Image(
+                        painter = painter,
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        Image(
-                            painter = painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(250.dp)
-                                .align(Alignment.BottomCenter)
-                        )
-                    }
-                    Text(
-                        text = chapter.interfaceResources?.title.orEmpty(),
-                        color = Color.White,
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold,
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp)
+                            .align(Alignment.BottomCenter)
+                    )
+
+                    Canvas(
                         modifier = Modifier
                             .padding(16.dp),
-                        fontFamily = buddyChampionFamily,
+                        onDraw = {
+                            drawIntoCanvas {
+                                it.nativeCanvas.drawText(chapter.interfaceResources?.title.orEmpty(), 15f, 40.dp.toPx(), getNativePaint(requireContext(), 104f, true))
+                                it.nativeCanvas.drawText(chapter.interfaceResources?.title.orEmpty(), 15f, 40.dp.toPx(), getNativePaint(requireContext(), 104f, false))
+                            }
+                        }
                     )
-                    Text(
-                        text = chapter.interfaceResources?.subtitle.orEmpty(),
-                        color = Color.LightGray,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = buddyChampionFamily,
+                    Canvas(
                         modifier = Modifier
-                            .padding(top = 56.dp, start = 24.dp)
+                            .padding(16.dp),
+                        onDraw = {
+                            drawIntoCanvas {
+                                it.nativeCanvas.drawText(chapter.interfaceResources?.subtitle.orEmpty(), 15f, 60.dp.toPx(), getNativePaint(requireContext(), 64f, true))
+                                it.nativeCanvas.drawText(chapter.interfaceResources?.subtitle.orEmpty(), 15f, 60.dp.toPx(), getNativePaint(requireContext(), 64f, false))
+                            }
+                        }
                     )
                 }
                 LoadCard(option, randomColor)
@@ -198,7 +202,6 @@ class QuestionFragment() : Fragment() {
             }
         }
     }
-
     @Composable
     fun LoadCard(option: Option, randomColor: Pair<Color,Color>){
         var visible by remember { mutableStateOf(0) }
@@ -220,12 +223,15 @@ class QuestionFragment() : Fragment() {
         )
         Card(
             Modifier
-                .padding(top = 16.dp, end = 32.dp, start = 32.dp, bottom = 16.dp)
+                .padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 16.dp)
                 .fillMaxSize()
                 .graphicsLayer {
                     rotationY = rotation
                     cameraDistance = 8 * density
-                }
+                }, // Margin of 30dp
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
                 /*.clickable {
                     visible = 0
                 }*/
@@ -247,8 +253,9 @@ class QuestionFragment() : Fragment() {
                     ) {
                         Text(
                             modifier = Modifier
-                                .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
+                                .padding(bottom = 16.dp, end = 16.dp, start = 16.dp, top = 16.dp),
                             text = option.text ?: "",
+                            fontSize = 24.sp,
                             fontFamily = buddyChampionFamily,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -263,7 +270,10 @@ class QuestionFragment() : Fragment() {
                                 backButtonPress()
                             }) {
                             Text(
-                                fontFamily = buddyChampionFamily,text = "Back")
+                                fontFamily = buddyChampionFamily,
+                                fontSize = 24.sp,
+                                text = "Back"
+                            )
                         }
                     }
                 }
@@ -273,7 +283,10 @@ class QuestionFragment() : Fragment() {
                         .fillMaxSize()
                         .graphicsLayer {
                             alpha = if (rotated) animateBack else animateFront
-                        }
+                        }, // Margin of 30dp
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
                 ) {
                     Column(
                         verticalArrangement = Arrangement.Bottom,
@@ -283,9 +296,11 @@ class QuestionFragment() : Fragment() {
                     ) {
                         Text(
                             modifier = Modifier
-                                .padding(bottom = 16.dp, end = 32.dp, start = 32.dp),
+                                .padding(bottom = 16.dp, end = 16.dp, start = 16.dp, top = 16.dp),
                             text = option.text ?: "",
-                            fontFamily = buddyChampionFamily,
+                            fontSize = 24.sp,
+                            textAlign = TextAlign.Center,
+                                    fontFamily = buddyChampionFamily,
                             //style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -300,7 +315,10 @@ class QuestionFragment() : Fragment() {
                                 rotated = !rotated
                             }) {
                             Text(
-                                fontFamily = buddyChampionFamily,text = "Continue")
+                                fontFamily = buddyChampionFamily,
+                                fontSize = 16.sp,
+                                text = "Continue"
+                            )
                         }
                     }
                 }
@@ -311,14 +329,19 @@ class QuestionFragment() : Fragment() {
                         .graphicsLayer {
                             alpha = if (rotated) animateBack else animateFront
                             rotationY = 180f
-                        }
+                        }, // Margin of 30dp
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(top = 16.dp, bottom = 8.dp, end = 32.dp, start = 32.dp),
+                            .padding(bottom = 16.dp, end = 16.dp, start = 16.dp, top = 16.dp),
                         text = option.question ?: "",
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Center,
                         fontFamily = buddyChampionFamily,
-                        style = MaterialTheme.typography.titleLarge
+                        //style = MaterialTheme.typography.bodySmall
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     option.options?.forEach { leOption ->
@@ -340,14 +363,20 @@ class QuestionFragment() : Fragment() {
                             }
                         ) {
                             Text(
-                                fontFamily = buddyChampionFamily,text = leOption.option ?: "")
+                                fontFamily = buddyChampionFamily,
+                                fontSize = 16.sp,
+                                text = leOption.option ?: ""
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }else if (visible == 2) {
                 Card(
-                    modifier = Modifier
+                    modifier = Modifier, // Margin of 30dp
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
                 ) {
                     Box(
                         modifier = Modifier
@@ -388,18 +417,20 @@ class QuestionFragment() : Fragment() {
         )
 
         LottieAnimation(
-            modifier = Modifier.height(300.dp).width(300.dp),
+            modifier = Modifier
+                .height(300.dp)
+                .width(300.dp),
             composition = composition,
             progress = progress,
         )
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getChapter("CH3S1")
+
     }
-    @Preview
+    /*@Preview
     @Composable
     fun Preview(){
         View()
-    }
+    }*/
 }

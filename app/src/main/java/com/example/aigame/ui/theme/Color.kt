@@ -11,5 +11,6 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val accent = Color(0xFFDBA245)
-val accentBackground = Color(0xFF9A6525)
+val accentTitle = Color(0xFF9A6525)
+val accentSubtitle = Color(0xFF9A7b55)
 val grayCard = Color(0xFF3f434b)
