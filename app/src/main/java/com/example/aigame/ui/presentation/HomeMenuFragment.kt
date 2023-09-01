@@ -35,13 +35,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.activityViewModels
 import com.example.aigame.R
 import com.example.aigame.ui.theme.accent
 import com.example.aigame.ui.theme.buddyChampionFamily
 import com.example.aigame.ui.theme.getNativePaint
 import com.example.aigame.ui.theme.grayCard
+import com.example.aigame.view_models.HomeMenuViewModel
+import com.example.aigame.view_models.QuestionViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeMenuFragment : Fragment() {
+    private val viewModel: HomeMenuViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,23 +130,26 @@ class HomeMenuFragment : Fragment() {
                                 text = "New Game"
                             )
                         }
-                        Button(
-                            modifier = Modifier.fillMaxWidth().padding(end = 20.dp, start = 20.dp, top = 8.dp),
-                            shape = MaterialTheme.shapes.small,
-                            colors = ButtonDefaults.buttonColors(accent),
-                            onClick = {
+                        if(viewModel.hasSavedGame()) {
+                            Button(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(end = 20.dp, start = 20.dp, top = 8.dp),
+                                shape = MaterialTheme.shapes.small,
+                                colors = ButtonDefaults.buttonColors(accent),
+                                onClick = {
 
-                                val fragment = QuestionFragment(false)
-                                requireFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, fragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }) {
-                            Text(
-                                fontSize = 16.sp,
-                                fontFamily = buddyChampionFamily,
-                                text = "Continue"
-                            )
+                                    val fragment = QuestionFragment(false)
+                                    requireFragmentManager().beginTransaction()
+                                        .replace(R.id.fragmentContainer, fragment)
+                                        .addToBackStack(null)
+                                        .commit()
+                                }) {
+                                Text(
+                                    fontSize = 16.sp,
+                                    fontFamily = buddyChampionFamily,
+                                    text = "Continue"
+                                )
+                            }
                         }
 
                         /*

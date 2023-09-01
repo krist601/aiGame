@@ -18,10 +18,14 @@ class SharedPreferencesHelper(
         editor.apply()
     }
     fun <T> retrieveData(sharedPreferenceName: String, clazz: Class<T>): T?{
-        val chapterResponseJson = sharedPreferences.getString(sharedPreferenceName, null)
-        return if (chapterResponseJson != null) {
+        val sharedPreference = sharedPreferences.getString(sharedPreferenceName, null)
+        return if (sharedPreference != null) {
             val gson = Gson()
-            return gson.fromJson(chapterResponseJson, clazz)
+            return gson.fromJson(sharedPreference, clazz)
         } else null
+    }
+    fun <T> hasData(sharedPreferenceName: String): Boolean{
+        val sharedPreference = sharedPreferences.getString(sharedPreferenceName, null)
+        return sharedPreference != null
     }
 }

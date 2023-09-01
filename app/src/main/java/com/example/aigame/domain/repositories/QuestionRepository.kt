@@ -2,7 +2,6 @@ package com.example.aigame.domain.repositories
 
 import com.example.aigame.data.data_sources.local.QuestionLocalDataSource
 import com.example.aigame.data.data_sources.network.QuestionNetworkDataSource
-import com.example.aigame.data.services.RetrofitMS
 import com.example.aigame.domain.entities.ChapterEntity
 import com.example.aigame.domain.entities.InterfaceResources
 import com.example.aigame.domain.entities.Option
@@ -35,6 +34,9 @@ class QuestionRepository @Inject constructor(
     }
     fun setInterfaceResources(interfaceResources: InterfaceResources?){
         questionLocalDataSource.setInterfaceResources(interfaceResources)
+    }
+    fun hasSavedGame(): Boolean{
+        return questionLocalDataSource.hasSavedGame()
     }
 }
 
