@@ -18,7 +18,8 @@ data class Option(
     val text: String? = null,
     val question: String? = null,
     val options: List<Option>? = null,
-    val next_chapter_id: String? = null
+    val next_chapter_id: String? = null,
+    val interfaceResources: InterfaceResources? = null
 )
 
 fun mapChapterToChapterEntity(chapter: OptionResponse): ChapterEntity {
@@ -34,6 +35,11 @@ fun mapOptionToOption(option: OptionResponse): Option {
         option = option.option,
         question = option.question,
         options = option.options?.map { mapOptionToOption(it) },
-        next_chapter_id = option.next_chapter_id
+        next_chapter_id = option.next_chapter_id,
+        interfaceResources = InterfaceResources(
+            title = option.title,
+            subtitle = option.sub_title,
+            image = option.image
+        )
     )
 }

@@ -28,4 +28,10 @@ class SharedPreferencesHelper(
         val sharedPreference = sharedPreferences.getString(sharedPreferenceName, null)
         return sharedPreference != null
     }
+    fun deleteData(sharedPreferenceName: String){
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        //editor.putString(sharedPreferenceName, "")
+        editor.apply()
+    }
 }

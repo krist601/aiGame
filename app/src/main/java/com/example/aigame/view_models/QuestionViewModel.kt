@@ -3,6 +3,7 @@ package com.example.aigame.view_models
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aigame.domain.entities.ChapterEntity
+import com.example.aigame.domain.entities.InterfaceResources
 import com.example.aigame.domain.entities.Option
 import com.example.aigame.domain.use_cases.GetChapterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,7 +49,11 @@ class QuestionViewModel @Inject constructor(
             _viewStateFlow.value =
                 if (!option.next_chapter_id.isNullOrBlank()) ViewStates.NextChapter
                 else if (!option.options.isNullOrEmpty()) ViewStates.Questions
-                else ViewStates.DeadEnd
+                else {
+                    getChapterUseCase.deleteSavedGame()
+                    _chapterData.value = ChapterEntity(interfaceResources = option.interfaceResources)
+                    ViewStates.DeadEnd
+                }
 
         }
     }

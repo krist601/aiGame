@@ -127,7 +127,7 @@ class QuestionFragment(
         val chapter by viewModel.chapterData.collectAsState()
         val option by viewModel.optionData.collectAsState()
 
-        val imageUrl = chapter.interfaceResources?.image ?: ""
+        val imageUrl by remember { mutableStateOf(chapter.interfaceResources?.image ?: "") }
         val adView = remember {
             AdView(context).apply {
                 adSize = AdSize.FLUID
@@ -176,12 +176,12 @@ class QuestionFragment(
                         0 -> {
                             //LottieAnimationExample()
                             Image(
-                                painterResource(R.drawable.detective_background),
+                                painterResource(R.drawable.image_background),
                                 contentDescription = "desc",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp)
+                                    .padding(start = 16.dp, end = 16.dp, top = 24.dp)
                                     .align(Alignment.BottomCenter))
                         }
                         200 -> {
@@ -206,8 +206,6 @@ class QuestionFragment(
                                     .align(Alignment.BottomCenter))
                         }
                     }
-
-
 
                     Canvas(
                         modifier = Modifier

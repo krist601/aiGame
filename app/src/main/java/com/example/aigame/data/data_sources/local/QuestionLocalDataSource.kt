@@ -30,4 +30,8 @@ class QuestionLocalDataSource @Inject constructor(
     fun hasSavedGame(): Boolean{
         return sharedPreferencesHelper.hasData<InterfaceResources>("savedGameInterfaceResources")
     }
+    fun deleteSavedGame(){
+        sharedPreferencesHelper.deleteData("savedGame")
+        sharedPreferencesHelper.deleteData("savedGameInterfaceResources")
+    }
 }

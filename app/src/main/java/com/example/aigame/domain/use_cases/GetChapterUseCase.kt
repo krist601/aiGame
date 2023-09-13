@@ -24,4 +24,7 @@ class GetChapterUseCase @Inject constructor(
     fun setInterfaceResources(interfaceResources: InterfaceResources?){
         questionRepository.setInterfaceResources(interfaceResources)
     }
+    fun deleteSavedGame(){
+        questionRepository.deleteSavedGame()
+    }
 }

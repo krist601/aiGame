@@ -38,5 +38,8 @@ class QuestionRepository @Inject constructor(
     fun hasSavedGame(): Boolean{
         return questionLocalDataSource.hasSavedGame()
     }
+    fun deleteSavedGame(){
+        questionLocalDataSource.deleteSavedGame()
+    }
 }
 
