@@ -248,7 +248,7 @@ class QuestionFragment(
 
         isNewGame?.let{
             if(it){
-                viewModel.getChapter("CH1S1")
+                viewModel.getChapter("CH3S1")
             }
             else
                 viewModel.getSavedGame()

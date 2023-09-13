@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@color/white</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/detective_background</item>
+        <!-- Add any other attributes you want for your splash screen theme -->
+    </style>
+</resources>
