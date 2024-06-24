@@ -20,13 +20,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-//navGraph investigar
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "homeMenu") {
-        composable("homeMenu") { HomeMenuScreen({},{}) }
-        composable("question") { QuestionFragment() }
+        composable("homeMenu") { HomeMenuScreen(onNewGameClicked = { navController.navigate("newGame") }, { navController.navigate("loadGame") }) }
+        composable("newGame") { QuestionScreen(true) }
+        composable("loadGame") { QuestionScreen(false) }
     }
 }
 

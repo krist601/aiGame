@@ -37,18 +37,19 @@ val Typography = Typography(
     */
 )
 
-fun getNativePaint(context: Context, textSizeFloat: Float, stroke: Boolean): NativePaint{
+fun getNativePaint(context: Context, textSize: Float, stroke: Boolean): android.graphics.Paint {
         val customTypeface = ResourcesCompat.getFont(context, com.example.aigame.R.font.buddychampion)
+
         return Paint().asFrameworkPaint().apply {
                 isAntiAlias = true
-                textSize = textSizeFloat
+                this.textSize = textSize
                 typeface = customTypeface
-                if(stroke){
+                if (stroke) {
                         color = android.graphics.Color.BLACK
                         style = android.graphics.Paint.Style.STROKE
-                        strokeWidth = 12f
-                        strokeMiter= 10f
-                }else{
+                        strokeWidth = 4f
+                        strokeMiter= 1f
+                } else {
                         style = android.graphics.Paint.Style.FILL
                         color = android.graphics.Color.WHITE
                 }

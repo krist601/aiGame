@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,8 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.aigame.R
 import com.example.aigame.ui.theme.buddyChampionFamily
 import com.example.aigame.view_models.HomeMenuViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 //@Inject lateinit var viewModel: HomeMenuViewModel
 
@@ -58,36 +57,41 @@ fun MenuOptions(
     onNewGameClicked: () -> Unit,
     onContinueGameClicked: () -> Unit
 ) {
-    Column(
+    Box(
         modifier = Modifier
-            .padding(16.dp)
-            .height(360.dp)
-            //.align(Alignment.BottomCenter)
-        ,
-        verticalArrangement = Arrangement.Bottom
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.BottomCenter
     ) {
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(30.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+                .padding(16.dp)
+                .height(360.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Column(modifier = Modifier.padding(30.dp)) {
-                Button(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                    onClick = onNewGameClicked
-                ) {
-                    Text("New Game", fontSize = 16.sp, fontFamily = buddyChampionFamily)
-                }
-                if (viewModel.hasSavedGame()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(30.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Column(modifier = Modifier.padding(30.dp)) {
                     Button(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                        onClick = onContinueGameClicked
+                        onClick = onNewGameClicked
                     ) {
-                        Text("Continue", fontSize = 16.sp, fontFamily = buddyChampionFamily)
+                        Text("New Game", fontSize = 16.sp, fontFamily = buddyChampionFamily)
                     }
+                    if (viewModel.hasSavedGame()) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                            onClick = onContinueGameClicked
+                        ) {
+                            Text("Continue", fontSize = 16.sp, fontFamily = buddyChampionFamily)
+                        }
+                    }
+                    // Additional buttons can be added here
                 }
-                // Additional buttons can be added here
             }
         }
     }
