@@ -17,14 +17,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,11 +49,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ErrorResult
 import coil.request.ImageRequest
-import coil.request.ImageResult
+import coil.request.SuccessResult
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -73,7 +70,6 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.random.Random
 
 
 @AndroidEntryPoint
@@ -116,7 +112,7 @@ class QuestionFragment(
         }
 
     }
-    @OptIn(ExperimentalCoilApi::class)
+
     @Composable
     fun InnerView(randomColor: Pair<Color,Color>){
         var imageState by remember { mutableIntStateOf(0) }
@@ -130,7 +126,7 @@ class QuestionFragment(
         val imageUrl by remember { mutableStateOf(chapter.interfaceResources?.image ?: "") }
         val adView = remember {
             AdView(context).apply {
-                adSize = AdSize.FLUID
+                setAdSize(AdSize.FLUID)
                 adUnitId = "ca-app-pub-3940256099942544/6300978111"//"ca-app-pub-8059056970711952/1746641337"
                 loadAd(AdRequest.Builder().build())
             }
@@ -151,27 +147,35 @@ class QuestionFragment(
                         .background(Color.Transparent)
                         .height(350.dp),
                 ) {
-                    val painter = rememberImagePainter(data = imageUrl,
-                        builder = {
-                            listener(object : ImageRequest.Listener {
-                                override fun onCancel(request: ImageRequest) {
-                                    imageState = 400
-                                }
+                    val painter = rememberAsyncImagePainter(
+                        ImageRequest.Builder(LocalContext.current).data(data = imageUrl)
+                            .apply(block = fun ImageRequest.Builder.() {
+                                listener(object : ImageRequest.Listener {
+                                    override fun onCancel(request: ImageRequest) {
+                                        imageState = 400
+                                    }
 
-                                override fun onError(request: ImageRequest, throwable: Throwable) {
-                                    imageState = 400
-                                }
+                                    override fun onError(
+                                        request: ImageRequest,
+                                        result: ErrorResult
+                                    ) {
+                                        imageState = 400
+                                    }
 
-                                override fun onStart(request: ImageRequest) {
-                                    imageState = 0
-                                }
+                                    override fun onStart(request: ImageRequest) {
+                                        imageState = 0
+                                    }
 
-                                override fun onSuccess(request: ImageRequest, metadata: ImageResult.Metadata) {
-                                    imageState = 200
-                                }
-                            })
-                            crossfade(true)
-                        })
+                                    override fun onSuccess(
+                                        request: ImageRequest,
+                                        result: SuccessResult
+                                    ) {
+                                        imageState = 200
+                                    }
+                                })
+                                crossfade(true)
+                            }).build()
+                    )
                     when (imageState) {
                         0 -> {
                             //LottieAnimationExample()
@@ -257,16 +261,16 @@ class QuestionFragment(
 
         val rotation by animateFloatAsState(
             targetValue = if (rotated) 180f else 0f,
-            animationSpec = tween(500)
+            animationSpec = tween(500), label = ""
         )
         val animateFront by animateFloatAsState(
             targetValue = if (!rotated) 1f else 0f,
-            animationSpec = tween(500)
+            animationSpec = tween(500), label = ""
         )
 
         val animateBack by animateFloatAsState(
             targetValue = if (rotated) 1f else 0f,
-            animationSpec = tween(500)
+            animationSpec = tween(500), label = ""
         )
         Card(
             Modifier
@@ -483,8 +487,8 @@ class QuestionFragment(
             }
         }
     }
-    fun backButtonPress(){
-        requireFragmentManager().popBackStack()
+    private fun backButtonPress(){
+        parentFragmentManager.popBackStack()
     }
     @Composable
     fun LottieAnimationExample() {
