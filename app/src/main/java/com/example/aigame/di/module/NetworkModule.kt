@@ -3,6 +3,7 @@ package com.example.aigame.di.module
 import android.content.Context
 import com.example.aigame.data.data_sources.local.QuestionLocalDataSource
 import com.example.aigame.data.data_sources.network.QuestionNetworkDataSource
+import com.example.aigame.data.services.CustomInterceptor
 import com.example.aigame.data.services.RetrofitMS
 import com.example.aigame.data.util.SharedPreferencesHelper
 import com.example.aigame.domain.repositories.QuestionRepository
@@ -22,8 +23,8 @@ class NetworkModule {
     @Provides
     fun provideMoshi(): Moshi = Moshi.Builder().build()
 
-    val okHttpClient = OkHttpClient.Builder()
-        //.addInterceptor(CustomInterceptor())
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(CustomInterceptor())
         .build()
     @Provides
     fun provideRetrofit(moshi: Moshi): Retrofit = Retrofit.Builder()

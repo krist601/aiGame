@@ -1,6 +1,8 @@
 package com.example.aigame.ui.presentation
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.aigame.R
 import com.example.aigame.ui.theme.buddyChampionFamily
+import com.example.aigame.ui.theme.getNativePaint
 import com.example.aigame.view_models.HomeMenuViewModel
 
 //@Inject lateinit var viewModel: HomeMenuViewModel
@@ -57,6 +63,25 @@ fun MenuOptions(
     onNewGameClicked: () -> Unit,
     onContinueGameClicked: () -> Unit
 ) {
+    val context = LocalContext.current
+    Canvas(
+        modifier = Modifier.padding(start = 16.dp, top = 25.dp),
+        onDraw = {
+            val titleStrokePaint = getNativePaint(context, 120f, true)
+            val titleFillPaint = getNativePaint(context, 120f, false)
+            val appName = "Uncertain"
+            drawIntoCanvas {
+                it.nativeCanvas.drawText(
+                    appName,
+                    15f, 40.dp.toPx(), titleStrokePaint
+                )
+                it.nativeCanvas.drawText(
+                    appName,
+                    15f, 40.dp.toPx(), titleFillPaint
+                )
+            }
+        }
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +115,6 @@ fun MenuOptions(
                             Text("Continue", fontSize = 16.sp, fontFamily = buddyChampionFamily)
                         }
                     }
-                    // Additional buttons can be added here
                 }
             }
         }

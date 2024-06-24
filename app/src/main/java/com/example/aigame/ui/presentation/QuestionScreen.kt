@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ErrorResult
 import coil.request.ImageRequest
@@ -45,7 +46,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 
 @Composable
-fun QuestionScreen(isNewGame: Boolean) {
+fun QuestionScreen(navController: NavController, isNewGame: Boolean) {
     val viewModel: QuestionViewModel = hiltViewModel()
     val context = LocalContext.current
 
@@ -66,12 +67,12 @@ fun QuestionScreen(isNewGame: Boolean) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        InnerView(viewModel)
+        InnerView(viewModel, navController)
     }
 }
 
 @Composable
-fun InnerView(viewModel: QuestionViewModel) {
+fun InnerView(viewModel: QuestionViewModel, navController: NavController) {
     var imageState by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     MobileAds.initialize(context)
@@ -196,7 +197,7 @@ fun InnerView(viewModel: QuestionViewModel) {
                     }
                 )
             }
-            LoadCard(option)
+            LoadCard(navController, option)
         }
         Column(
             modifier = Modifier
@@ -210,7 +211,7 @@ fun InnerView(viewModel: QuestionViewModel) {
 }
 
 @Composable
-fun LoadCard(option: Option) {
+fun LoadCard(navController: NavController, option: Option) {
     val viewModel: QuestionViewModel = hiltViewModel()
     var rotated by remember { mutableStateOf(false) }
 
@@ -296,7 +297,7 @@ fun LoadCard(option: Option) {
                         .graphicsLayer {
                             alpha = if (rotated) animateBack else animateFront
                             rotationY = 180f
-                        }, // Margin of 30dp
+                        },
                     colors = CardDefaults.cardColors(
                         containerColor = Color.White
                     )
@@ -305,7 +306,7 @@ fun LoadCard(option: Option) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp)
-                            .verticalScroll(rememberScrollState()) // ScrollView agregado aquí
+                            .verticalScroll(rememberScrollState())
                     ) {
                         option.question?.let{
                             Text(
@@ -365,7 +366,7 @@ fun LoadCard(option: Option) {
                             modifier = Modifier
                                 .padding(16.dp)
                                 .fillMaxWidth(),
-                            onClick = { /*viewModel.popBackStack()*/ }
+                            onClick = { navController.popBackStack() }
                         ) {
                             Text("Back", fontSize = 24.sp, fontFamily = buddyChampionFamily)
                         }
