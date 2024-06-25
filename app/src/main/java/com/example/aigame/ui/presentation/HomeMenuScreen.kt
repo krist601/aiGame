@@ -1,38 +1,32 @@
 package com.example.aigame.ui.presentation
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.aigame.R
 import com.example.aigame.ui.theme.buddyChampionFamily
-import com.example.aigame.ui.theme.getNativePaint
 import com.example.aigame.view_models.HomeMenuViewModel
-
-//@Inject lateinit var viewModel: HomeMenuViewModel
 
 @Composable
 fun HomeMenuScreen(
@@ -40,21 +34,49 @@ fun HomeMenuScreen(
     onContinueGameClicked: () -> Unit
 ) {
     val viewModel: HomeMenuViewModel = hiltViewModel()
-    Box {
+    Column(
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxHeight()
+    ) {
+        Text(
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+            text = "Uncertain",
+            fontSize = 72.sp,
+            fontFamily = buddyChampionFamily,
+            textAlign = TextAlign.Justify
+        )
+        BlackSpacer(4.dp, 4.dp)
+        BlackSpacer(4.dp, 4.dp)
         Image(
-            painter = painterResource(id = R.drawable.detective_menu_background_two),
+            painter = painterResource(id = R.drawable.detective_background_menu),
             contentDescription = "Background Image",
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .height(300.dp)
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             contentScale = ContentScale.Crop
         )
-        TitleCanvas()
+        Text(
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+            text = "In this game, you’ll step into the shoes of an astute detective, navigating through a series of thrilling and intricate cases. Each investigation will challenge your wit, observation skills, and deductive reasoning as you delve into the hidden secrets and unravel the truth.",
+            fontFamily = buddyChampionFamily,
+            textAlign = TextAlign.Justify
+        )
+        BlackSpacer(2.dp, 4.dp)
         MenuOptions(viewModel, onNewGameClicked, onContinueGameClicked)
     }
 }
 
 @Composable
-fun TitleCanvas() {
-    // Your Canvas code for the title
+fun BlackSpacer(height: Dp, paddingTop: Dp){
+    Box(
+        modifier = Modifier
+            .padding(top = paddingTop, start = 16.dp, end = 16.dp)
+            .height(height)
+            .fillMaxWidth()
+            .background(Color.Black)
+    )
 }
 
 @Composable
@@ -63,59 +85,35 @@ fun MenuOptions(
     onNewGameClicked: () -> Unit,
     onContinueGameClicked: () -> Unit
 ) {
-    val context = LocalContext.current
-    Canvas(
-        modifier = Modifier.padding(start = 16.dp, top = 25.dp),
-        onDraw = {
-            val titleStrokePaint = getNativePaint(context, 120f, true)
-            val titleFillPaint = getNativePaint(context, 120f, false)
-            val appName = "Uncertain"
-            drawIntoCanvas {
-                it.nativeCanvas.drawText(
-                    appName,
-                    15f, 40.dp.toPx(), titleStrokePaint
-                )
-                it.nativeCanvas.drawText(
-                    appName,
-                    15f, 40.dp.toPx(), titleFillPaint
-                )
-            }
-        }
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Column(
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(
             modifier = Modifier
-                .padding(16.dp)
-                .height(360.dp),
-            verticalArrangement = Arrangement.Bottom
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            onClick = onNewGameClicked,
+            shape = RoundedCornerShape(50),
+            border = BorderStroke(1.dp, Color.Black),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = Color.Black
+            )
         ) {
-            Card(
+            Text("New Game", fontSize = 16.sp, fontFamily = buddyChampionFamily)
+        }
+        if (viewModel.hasSavedGame()) {
+            Button(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                onClick = onContinueGameClicked,
+                shape = RoundedCornerShape(50),
+                border = BorderStroke(2.dp, Color.Black),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.Black
+                )
             ) {
-                Column(modifier = Modifier.padding(30.dp)) {
-                    Button(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                        onClick = onNewGameClicked
-                    ) {
-                        Text("New Game", fontSize = 16.sp, fontFamily = buddyChampionFamily)
-                    }
-                    if (viewModel.hasSavedGame()) {
-                        Button(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                            onClick = onContinueGameClicked
-                        ) {
-                            Text("Continue", fontSize = 16.sp, fontFamily = buddyChampionFamily)
-                        }
-                    }
-                }
+                Text("Continue", fontSize = 16.sp, fontFamily = buddyChampionFamily)
             }
         }
     }
