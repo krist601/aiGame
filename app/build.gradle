@@ -7,7 +7,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.dagger.hilt.android'
 
 android {
-    namespace 'com.example.aigame'
+    namespace 'com.kdg.uncertain'
     compileSdk 34
 
     sourceSets {
@@ -16,7 +16,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId "com.example.aigame"
+        applicationId "com.kdg.uncertain"
         minSdk 21
         targetSdk 33
         versionCode 1
