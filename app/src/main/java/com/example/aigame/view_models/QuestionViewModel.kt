@@ -36,7 +36,7 @@ class QuestionViewModel @Inject constructor(
                 _chapterData.value = chapterEntity
                 chapterEntity.branch?.let { _optionData.value = it }
                 _viewStateFlow.value = ViewStates.Questions
-            }
+            }else _viewStateFlow.value = ViewStates.ConnectionError
         }
     }
     fun setNewQuestion(option: Option){
@@ -82,4 +82,5 @@ sealed class ViewStates {
     object Answers : ViewStates()
     object DeadEnd : ViewStates()
     object NextChapter : ViewStates()
+    object ConnectionError : ViewStates()
 }

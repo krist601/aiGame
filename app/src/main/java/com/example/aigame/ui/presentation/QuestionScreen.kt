@@ -49,6 +49,7 @@ import com.google.android.gms.ads.MobileAds
 fun QuestionScreen(navController: NavController, isNewGame: Boolean) {
     val viewModel: QuestionViewModel = hiltViewModel()
     val context = LocalContext.current
+    val viewState by viewModel.viewStateFlow.collectAsState()
 
     MobileAds.initialize(context)
 
@@ -59,7 +60,6 @@ fun QuestionScreen(navController: NavController, isNewGame: Boolean) {
             viewModel.getSavedGame()
         }
     }
-
     Box(Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(R.drawable.detective_background_blur_bw),
@@ -67,12 +67,36 @@ fun QuestionScreen(navController: NavController, isNewGame: Boolean) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        InnerView(viewModel, navController)
+        if (viewState != ViewStates.ConnectionError) {
+                InnerView(viewModel, navController, viewState)
+        }else{
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+                contentAlignment = Alignment.Center,
+            ) {
+                LottieAnimationError()
+
+            }
+            Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Button(
+                    modifier = Modifier
+                        .padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
+                        .fillMaxWidth(),
+                    onClick = { navController.popBackStack() }
+                ) {
+                    Text("Back", fontSize = 24.sp, fontFamily = buddyChampionFamily)
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun InnerView(viewModel: QuestionViewModel, navController: NavController) {
+fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewState: ViewStates) {
     var imageState by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     MobileAds.initialize(context)
@@ -197,7 +221,7 @@ fun InnerView(viewModel: QuestionViewModel, navController: NavController) {
                     }
                 )
             }
-            LoadCard(navController, option)
+            LoadCard(navController, viewState, option)
         }
         Column(
             modifier = Modifier
@@ -211,7 +235,7 @@ fun InnerView(viewModel: QuestionViewModel, navController: NavController) {
 }
 
 @Composable
-fun LoadCard(navController: NavController, option: Option) {
+fun LoadCard(navController: NavController, viewState: ViewStates, option: Option) {
     val viewModel: QuestionViewModel = hiltViewModel()
     var rotated by remember { mutableStateOf(false) }
 
@@ -240,7 +264,6 @@ fun LoadCard(navController: NavController, option: Option) {
             },
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        val viewState by viewModel.viewStateFlow.collectAsState()
 
         when (viewState) {
             ViewStates.Loading -> {
@@ -248,7 +271,7 @@ fun LoadCard(navController: NavController, option: Option) {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    LottieAnimationExample()
+                    LottieAnimationLoading()
                 }
             }
             ViewStates.Questions -> {
@@ -410,14 +433,36 @@ fun LoadCard(navController: NavController, option: Option) {
                     }
                 }
             }
+
+            ViewStates.ConnectionError -> {}
         }
     }
 }
 
 @Composable
-fun LottieAnimationExample() {
+fun LottieAnimationLoading() {
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.fingerprint_animation)
+    )
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever,
+        restartOnPlay = false
+    )
+
+    LottieAnimation(
+        modifier = Modifier
+            .height(300.dp)
+            .width(300.dp),
+        composition = composition,
+        progress = progress
+    )
+}
+
+@Composable
+fun LottieAnimationError() {
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(R.raw.connection_error)
     )
     val progress by animateLottieCompositionAsState(
         composition,

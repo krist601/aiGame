@@ -484,6 +484,8 @@ class QuestionFragment(
                         }
                     }
                 }
+
+                ViewStates.ConnectionError -> {}
             }
         }
     }
