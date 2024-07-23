@@ -1,0 +1,11 @@
+package com.kdg.uncertain.data.services
+
+import com.kdg.uncertain.data.entities.responses.OptionResponse
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
+
+interface RetrofitMS {
+    @GET("/story/stories/seasons/S1/chapters/{id}")
+    suspend fun getChapter(@Path("id") id: String, @Header("x-api-key") secret: String): OptionResponse
+}
