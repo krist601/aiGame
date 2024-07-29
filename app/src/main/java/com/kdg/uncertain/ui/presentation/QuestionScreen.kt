@@ -1,5 +1,6 @@
 package com.kdg.uncertain.ui.presentation
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -23,8 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ErrorResult
 import coil.request.ImageRequest
@@ -94,10 +97,9 @@ fun QuestionScreen(navController: NavController, isNewGame: Boolean) {
         }
     }
 }
-
 @Composable
 fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewState: ViewStates) {
-    var imageState by remember { mutableIntStateOf(0) }
+    var imageState by remember { mutableStateOf(0) }
     val context = LocalContext.current
     MobileAds.initialize(context)
 
@@ -108,7 +110,7 @@ fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewSt
     val adView = remember {
         AdView(context).apply {
             setAdSize(AdSize.FLUID)
-            adUnitId = "ca-app-pub-3940256099942544/6300978111"
+            adUnitId = this.context.getString(R.string.ad_unit_id)
             loadAd(AdRequest.Builder().build())
         }
     }
@@ -128,70 +130,24 @@ fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewSt
                     .background(Color.Transparent)
                     .height(250.dp),
             ) {
-                val painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(context).data(data = imageUrl)
-                        .apply {
-                            listener(object : ImageRequest.Listener {
-                                override fun onCancel(request: ImageRequest) {
-                                    imageState = 400
-                                }
-
-                                override fun onError(
-                                    request: ImageRequest,
-                                    result: ErrorResult
-                                ) {
-                                    imageState = 400
-                                }
-
-                                override fun onStart(request: ImageRequest) {
-                                    imageState = 0
-                                }
-
-                                override fun onSuccess(
-                                    request: ImageRequest,
-                                    result: SuccessResult
-                                ) {
-                                    imageState = 200
-                                }
-                            })
-                            crossfade(true)
-                        }.build()
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(imageUrl)
+                        .listener(
+                            onSuccess = { request, metadata ->
+                                // Handle success, if needed
+                            },
+                            onError = { request, throwable ->
+                                // Handle the error
+                                Log.e("ImageLoadError", "Error loading image", throwable.throwable)
+                            }
+                        )
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    error = painterResource(R.drawable.image_background)
                 )
-                when (imageState) {
-                    0 -> {
-                        Image(
-                            painterResource(R.drawable.image_background),
-                            contentDescription = "desc",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, top = 24.dp)
-                                .align(Alignment.BottomCenter)
-                        )
-                    }
-                    200 -> {
-                        Image(
-                            painter = painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp)
-                                .align(Alignment.BottomCenter)
-                        )
-                    }
-                    else -> {
-                        Image(
-                            painterResource(R.drawable.detective_background),
-                            contentDescription = "desc",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp)
-                                .align(Alignment.BottomCenter)
-                        )
-                    }
-                }
 
                 Canvas(
                     modifier = Modifier.padding(16.dp),
@@ -233,6 +189,7 @@ fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewSt
         }
     }
 }
+
 
 @Composable
 fun LoadCard(navController: NavController, viewState: ViewStates, option: Option) {

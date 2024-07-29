@@ -123,6 +123,7 @@ class QuestionFragment(
         val chapter by viewModel.chapterData.collectAsState()
         val option by viewModel.optionData.collectAsState()
 
+        println("krist: "+ chapter.interfaceResources?.image)
         val imageUrl by remember { mutableStateOf(chapter.interfaceResources?.image ?: "") }
         val adView = remember {
             AdView(context).apply {
