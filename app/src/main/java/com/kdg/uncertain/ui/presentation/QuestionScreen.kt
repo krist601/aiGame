@@ -99,14 +99,18 @@ fun QuestionScreen(navController: NavController, isNewGame: Boolean) {
 }
 @Composable
 fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewState: ViewStates) {
-    var imageState by remember { mutableStateOf(0) }
     val context = LocalContext.current
     MobileAds.initialize(context)
 
     val chapter by viewModel.chapterData.collectAsState()
     val option by viewModel.optionData.collectAsState()
 
-    val imageUrl by remember { mutableStateOf(chapter.interfaceResources?.image ?: "") }
+    var imageUrl by remember { mutableStateOf("") }
+
+    LaunchedEffect(chapter) {
+        imageUrl = chapter.interfaceResources?.image ?: ""
+    }
+
     val adView = remember {
         AdView(context).apply {
             setAdSize(AdSize.FLUID)
@@ -128,7 +132,8 @@ fun InnerView(viewModel: QuestionViewModel, navController: NavController, viewSt
             Box(
                 modifier = Modifier
                     .background(Color.Transparent)
-                    .height(250.dp),
+                    .height(250.dp)
+                    .padding(end = 16.dp, start = 16.dp),
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
